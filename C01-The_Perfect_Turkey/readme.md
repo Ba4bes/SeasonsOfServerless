@@ -5,6 +5,8 @@
 This is a PowerShell function App. 
 Approach was to just let PowerShell do the math. I have added Ascii art because #TeamAsciiArt and converted to grams so the recipe is usable for europeans :-).
 
+Credit for the ASCII art goes to [this awesome 90s website](https://oocities.org/spunk1111/)
+
 ## Try it yourself
 
 The function is designed to be called from a interactive prompt, but also works in a browser.
