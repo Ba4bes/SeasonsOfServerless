@@ -29,7 +29,7 @@ Invoke-RestMethod -uri https://4besc02.azurewebsites.net/api/Result -Body ($Body
 
 ```
 
-![screenshot](screenshot02.png)
+![screenshot](screenshot02b.png)
 
 Created by Barbara Forbes
 <https://4bes.nl>
