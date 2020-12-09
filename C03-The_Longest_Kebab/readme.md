@@ -32,7 +32,7 @@ Invoke-RestMethod https://4besc03.azurewebsites.net/api/GetKebab?people=5
 ```
 
 ```PowerShell
-Invoke-RestMethod https://4besc03.azurewebsites.net/api/GetKebab?weigth=20
+Invoke-RestMethod https://4besc03.azurewebsites.net/api/GetKebab?weight=20
 ```
 
 ```PowerShell
