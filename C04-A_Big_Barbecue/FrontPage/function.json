@@ -1,0 +1,26 @@
+{
+  "bindings": [
+    {
+      "authLevel": "anonymous",
+      "type": "httpTrigger",
+      "direction": "in",
+      "name": "Request",
+      "methods": [
+        "get"
+      ]
+    },
+    {
+      "type": "http",
+      "direction": "out",
+      "name": "Response"
+    },
+    {
+      "type": "cosmosDB",
+      "name": "FoodDBin",
+      "direction": "in",
+      "connectionStringSetting": "ba4bes_DOCUMENTDB",
+      "databaseName": "SoS",
+      "collectionName": "C04"
+    }
+  ]
+}

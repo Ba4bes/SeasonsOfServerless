@@ -1,0 +1,50 @@
+[
+    {
+        "Name": "beef",
+        "OnePersonPortion": {
+            "child": "150",
+            "adult": "300"
+        },
+        "costkg": "8"
+    },
+    {
+        "Name": "chickenfilet",
+        "OnePersonPortion": {
+            "child": "150",
+            "adult": "300"
+        },
+        "costkg": "7.50"
+    },
+    {
+        "Name": "sausages",
+        "OnePersonPortion": {
+            "child": "100",
+            "adult": "200"
+        },
+        "costkg": "7.50"
+    },
+    {
+        "Name": "grilled cheese",
+        "OnePersonPortion": {
+            "child": "100",
+            "adult": "200"
+        },
+        "costkg": "5"
+    },
+    {
+        "Name": "garlic bread",
+        "OnePersonPortion": {
+            "child": "80",
+            "adult": "160"
+        },
+        "costkg": "3"
+    },
+    {
+        "Name": "vegetarian burger",
+        "OnePersonPortion": {
+            "child": "75",
+            "adult": "150"
+        },
+        "costkg": "17"
+    }
+]
