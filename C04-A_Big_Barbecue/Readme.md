@@ -8,7 +8,7 @@ That might be because there is so much information in a table format. This calls
 The assignment confused me a bit as well. What input was I looking for and what output?  
 So I did what I often do when the process gets confusing: I made a drawing on my iPad.
 
-![drawing](.\process01.png)
+![drawing](process01.png)
 
 So, some clarity, awesome!
 
