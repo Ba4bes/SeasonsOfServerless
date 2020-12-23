@@ -1,0 +1,589 @@
+{
+    "definition": {
+        "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+        "actions": {
+            "HTTP_request_to_collect_ASCII_art": {
+                "inputs": {
+                    "method": "GET",
+                    "uri": "http://artii.herokuapp.com/make?text=@{variables('Trigger')}"
+                },
+                "runAfter": {
+                    "Initialize_variable_WaitTime": [
+                        "Succeeded"
+                    ]
+                },
+                "type": "Http"
+            },
+            "Initialize_variable_Action": {
+                "inputs": {
+                    "variables": [
+                        {
+                            "name": "Action",
+                            "type": "string"
+                        }
+                    ]
+                },
+                "runAfter": {
+                    "Initialize_variable_UserWaitTime": [
+                        "Succeeded",
+                        "Failed",
+                        "Skipped",
+                        "TimedOut"
+                    ]
+                },
+                "type": "InitializeVariable"
+            },
+            "Initialize_variable_Ascii": {
+                "inputs": {
+                    "variables": [
+                        {
+                            "name": "Ascii",
+                            "type": "string",
+                            "value": "@{concat('<pre>',body('HTTP_request_to_collect_ASCII_art'),'</pre>')}"
+                        }
+                    ]
+                },
+                "runAfter": {
+                    "HTTP_request_to_collect_ASCII_art": [
+                        "Succeeded"
+                    ]
+                },
+                "type": "InitializeVariable"
+            },
+            "Initialize_variable_LastAction": {
+                "inputs": {
+                    "variables": [
+                        {
+                            "name": "LastAction",
+                            "type": "string",
+                            "value": "@{tolower(split(triggerBody()?['body']?['content'],' ')[1])}"
+                        }
+                    ]
+                },
+                "runAfter": {
+                    "Initialize_variable_Trigger": [
+                        "Succeeded"
+                    ]
+                },
+                "type": "InitializeVariable"
+            },
+            "Initialize_variable_MessageContent": {
+                "inputs": {
+                    "variables": [
+                        {
+                            "name": "MessageContent",
+                            "type": "string",
+                            "value": "@triggerBody()?['body']?['content']"
+                        }
+                    ]
+                },
+                "runAfter": {},
+                "type": "InitializeVariable"
+            },
+            "Initialize_variable_ReturnString": {
+                "inputs": {
+                    "variables": [
+                        {
+                            "name": "ReturnString",
+                            "type": "string"
+                        }
+                    ]
+                },
+                "runAfter": {
+                    "Initialize_variable_LastAction": [
+                        "Succeeded",
+                        "Failed",
+                        "Skipped",
+                        "TimedOut"
+                    ]
+                },
+                "type": "InitializeVariable"
+            },
+            "Initialize_variable_Trigger": {
+                "inputs": {
+                    "variables": [
+                        {
+                            "name": "Trigger",
+                            "type": "string",
+                            "value": "@{tolower(split(triggerBody()?['body']?['content'],' ')[0])}"
+                        }
+                    ]
+                },
+                "runAfter": {
+                    "Initialize_variable_MessageContent": [
+                        "Succeeded"
+                    ]
+                },
+                "type": "InitializeVariable"
+            },
+            "Initialize_variable_UserWaitTime": {
+                "inputs": {
+                    "variables": [
+                        {
+                            "name": "UserWaitTime",
+                            "type": "integer",
+                            "value": "@int(split(triggerBody()?['body']?['content'],' ')[2])"
+                        }
+                    ]
+                },
+                "runAfter": {
+                    "Initialize_variable_ReturnString": [
+                        "Succeeded",
+                        "Failed",
+                        "Skipped",
+                        "TimedOut"
+                    ]
+                },
+                "type": "InitializeVariable"
+            },
+            "Initialize_variable_WaitTime": {
+                "inputs": {
+                    "variables": [
+                        {
+                            "name": "WaitTime",
+                            "type": "integer"
+                        }
+                    ]
+                },
+                "runAfter": {
+                    "Initialize_variable_Action": [
+                        "Succeeded"
+                    ]
+                },
+                "type": "InitializeVariable"
+            },
+            "Post_Ascii_as_a_reply_to_the_message": {
+                "inputs": {
+                    "body": {
+                        "body": {
+                            "content": "<p>@{variables('Ascii')}</p>",
+                            "contentType": "html"
+                        }
+                    },
+                    "host": {
+                        "connection": {
+                            "name": "@parameters('$connections')['teams']['connectionId']"
+                        }
+                    },
+                    "method": "post",
+                    "path": "/v2/beta/teams/@{encodeURIComponent('12345678-abcd-123456-abcd-12345678')}/channels/@{encodeURIComponent('01:1234567890abcdef@thread.tacv2')}/messages/@{encodeURIComponent(triggerBody()?['id'])}/replies"
+                },
+                "runAfter": {
+                    "Initialize_variable_Ascii": [
+                        "Succeeded"
+                    ]
+                },
+                "type": "ApiConnection"
+            },
+            "Switch_Trigger": {
+                "cases": {
+                    "Case:_Start": {
+                        "actions": {
+                            "Delay_30_seconds": {
+                                "inputs": {
+                                    "interval": {
+                                        "count": 30,
+                                        "unit": "Second"
+                                    }
+                                },
+                                "runAfter": {
+                                    "Post_initial_instructions_as_a_reply_to_message": [
+                                        "Succeeded"
+                                    ]
+                                },
+                                "type": "Wait"
+                            },
+                            "Post_garae-tteok_instructions_as_a_reply_to_message": {
+                                "inputs": {
+                                    "body": {
+                                        "body": {
+                                            "content": "<p>The 30 minutes are up! Does the garae-tteok look good?<br>\n<br>\nIf you are ready to move on, post the following as a <strong>NEW </strong>Teams message:<br>\n<br>\n<em>Done garae-tteok</em><br>\n<br>\nIf you need more time, set the timer by posting:<br>\n<br>\n<em>Wait garae-tteok 5</em><br>\n<br>\nYou can change the number in whatever number of minutes you want untille the next reminder!</p>",
+                                            "contentType": "html"
+                                        }
+                                    },
+                                    "host": {
+                                        "connection": {
+                                            "name": "@parameters('$connections')['teams']['connectionId']"
+                                        }
+                                    },
+                                    "method": "post",
+                                    "path": "/v2/beta/teams/@{encodeURIComponent('12345678-abcd-123456-abcd-12345678')}/channels/@{encodeURIComponent('01:1234567890abcdef@thread.tacv2')}/messages/@{encodeURIComponent(triggerBody()?['id'])}/replies"
+                                },
+                                "runAfter": {
+                                    "Delay_30_seconds": [
+                                        "Succeeded"
+                                    ]
+                                },
+                                "type": "ApiConnection"
+                            },
+                            "Post_initial_instructions_as_a_reply_to_message": {
+                                "inputs": {
+                                    "body": {
+                                        "body": {
+                                            "content": "<p><strong>Welcome!</strong><br>\nLet's start the recipe!<br>\n<br>\nPlease complete the following:<br>\n<br>\n1. Slice garae-tteok into small pieces – no thicker than 5 mm.<br>\n2. Put the sliced garae-tteok into a bowl of water.<br>\n<br>\nThe garae-tteok needs to stay in the water for 30 minutes.<br>\nYou will be reminded in 30 minutes!</p>",
+                                            "contentType": "html"
+                                        }
+                                    },
+                                    "host": {
+                                        "connection": {
+                                            "name": "@parameters('$connections')['teams']['connectionId']"
+                                        }
+                                    },
+                                    "method": "post",
+                                    "path": "/v2/beta/teams/@{encodeURIComponent('12345678-abcd-123456-abcd-12345678')}/channels/@{encodeURIComponent('01:1234567890abcdef@thread.tacv2')}/messages/@{encodeURIComponent(triggerBody()?['id'])}/replies"
+                                },
+                                "runAfter": {},
+                                "type": "ApiConnection"
+                            }
+                        },
+                        "case": "start"
+                    },
+                    "Case_done": {
+                        "actions": {
+                            "Condition:_if_waittime_-ne_0": {
+                                "actions": {
+                                    "Delay_WaitTime": {
+                                        "inputs": {
+                                            "interval": {
+                                                "count": "@variables('WaitTime')",
+                                                "unit": "Second"
+                                            }
+                                        },
+                                        "runAfter": {},
+                                        "type": "Wait"
+                                    },
+                                    "Post__waitTime_result_as_a_reply_to_a_message": {
+                                        "inputs": {
+                                            "body": {
+                                                "body": {
+                                                    "content": "<p>The @{variables('WaitTime')} minutes are up! Does the @{variables('Action')} look good?<br>\n<br>\nIf you are ready to move on, post the following as a NEW Teams message:<br>\n<br>\nDone @{variables('Action')}<br>\n<br>\nIf you need more time, set the timer by posting:<br>\n<br>\nWait @{variables('Action')} 5<br>\n<br>\nYou can change the number in whatever number of minutes you want untill the next reminder!</p>",
+                                                    "contentType": "html"
+                                                }
+                                            },
+                                            "host": {
+                                                "connection": {
+                                                    "name": "@parameters('$connections')['teams']['connectionId']"
+                                                }
+                                            },
+                                            "method": "post",
+                                            "path": "/v2/beta/teams/@{encodeURIComponent('12345678-abcd-123456-abcd-12345678')}/channels/@{encodeURIComponent('01:1234567890abcdef@thread.tacv2')}/messages/@{encodeURIComponent(triggerBody()?['id'])}/replies"
+                                        },
+                                        "runAfter": {
+                                            "Delay_WaitTime": [
+                                                "Succeeded"
+                                            ]
+                                        },
+                                        "type": "ApiConnection"
+                                    }
+                                },
+                                "expression": {
+                                    "and": [
+                                        {
+                                            "not": {
+                                                "equals": [
+                                                    "@variables('WaitTime')",
+                                                    0
+                                                ]
+                                            }
+                                        }
+                                    ]
+                                },
+                                "runAfter": {
+                                    "Post_ReturnString_as_a_reply_to_a_message": [
+                                        "Succeeded"
+                                    ]
+                                },
+                                "type": "If"
+                            },
+                            "Post_ReturnString_as_a_reply_to_a_message": {
+                                "inputs": {
+                                    "body": {
+                                        "body": {
+                                            "content": "<p>@{variables('ReturnString')}</p>",
+                                            "contentType": "html"
+                                        }
+                                    },
+                                    "host": {
+                                        "connection": {
+                                            "name": "@parameters('$connections')['teams']['connectionId']"
+                                        }
+                                    },
+                                    "method": "post",
+                                    "path": "/v2/beta/teams/@{encodeURIComponent('12345678-abcd-123456-abcd-12345678')}/channels/@{encodeURIComponent('01:1234567890abcdef@thread.tacv2')}/messages/@{encodeURIComponent(triggerBody()?['id'])}/replies"
+                                },
+                                "runAfter": {
+                                    "Switch_LastAction": [
+                                        "Succeeded"
+                                    ]
+                                },
+                                "type": "ApiConnection"
+                            },
+                            "Switch_LastAction": {
+                                "cases": {
+                                    "Case_2_fried-beef": {
+                                        "actions": {
+                                            "_fried-beef_Set_variable_Action": {
+                                                "inputs": {
+                                                    "name": "Action",
+                                                    "value": "boiled-soup"
+                                                },
+                                                "runAfter": {
+                                                    "fried-beef_Set_variable_WaitTime": [
+                                                        "Succeeded"
+                                                    ]
+                                                },
+                                                "type": "SetVariable"
+                                            },
+                                            "fried-beef_Set_variable_ReturnString": {
+                                                "inputs": {
+                                                    "name": "ReturnString",
+                                                    "value": "Great! Now do the following:  <p>\nPut the water into the wok and boil with medium heat.   <br>\nWhile boiling, remove bubbles from the water from time to time.   <br>\nWhile you are waiting, get the eggs beaten.   <br>\nThe water should boil for 30 minutes  <p>\nYou will be reminded in 30 minutes!  "
+                                                },
+                                                "runAfter": {},
+                                                "type": "SetVariable"
+                                            },
+                                            "fried-beef_Set_variable_WaitTime": {
+                                                "inputs": {
+                                                    "name": "WaitTime",
+                                                    "value": 30
+                                                },
+                                                "runAfter": {
+                                                    "fried-beef_Set_variable_ReturnString": [
+                                                        "Succeeded"
+                                                    ]
+                                                },
+                                                "type": "SetVariable"
+                                            }
+                                        },
+                                        "case": "fried-beef"
+                                    },
+                                    "Case_3_boiled-soup": {
+                                        "actions": {
+                                            "boiled-soup_Set_variable_WaitTime": {
+                                                "inputs": {
+                                                    "name": "WaitTime",
+                                                    "value": 0
+                                                },
+                                                "runAfter": {
+                                                    "boiled-soup_Set_variable_returnString": [
+                                                        "Succeeded"
+                                                    ]
+                                                },
+                                                "type": "SetVariable"
+                                            },
+                                            "boiled-soup_Set_variable_returnString": {
+                                                "inputs": {
+                                                    "name": "ReturnString",
+                                                    "value": "Great! Now do the following:<p>\nPut the minced garlic and soy sauce into the boiled soup. Add some salt, if necessary.<br>\nAdd the beaten egg and sliced spring onion.<br>\nServe the soup with pepper drizzled on top.<p>\n\nYou are done!"
+                                                },
+                                                "runAfter": {},
+                                                "type": "SetVariable"
+                                            }
+                                        },
+                                        "case": "boiled-soup"
+                                    },
+                                    "Case_garae-tteok": {
+                                        "actions": {
+                                            "garae-tteok_Set_variable_Action": {
+                                                "inputs": {
+                                                    "name": "Action",
+                                                    "value": "fried-beef"
+                                                },
+                                                "runAfter": {
+                                                    "garae-tteok_Set_variable_WaitTime": [
+                                                        "Succeeded"
+                                                    ]
+                                                },
+                                                "type": "SetVariable"
+                                            },
+                                            "garae-tteok_Set_variable_ReturnString": {
+                                                "inputs": {
+                                                    "name": "ReturnString",
+                                                    "value": "Great! Now do the following:<p>\nSlice spring onion. <br>\nAt high heat, stir-fry the diced beef with sesame oil and olive oil until the beef surface goes brown. <br>\nThis should take about 8 minutes.<p>\nYou will be reminded in 8 minutes!"
+                                                },
+                                                "runAfter": {},
+                                                "type": "SetVariable"
+                                            },
+                                            "garae-tteok_Set_variable_WaitTime": {
+                                                "inputs": {
+                                                    "name": "WaitTime",
+                                                    "value": 8
+                                                },
+                                                "runAfter": {
+                                                    "garae-tteok_Set_variable_ReturnString": [
+                                                        "Succeeded"
+                                                    ]
+                                                },
+                                                "type": "SetVariable"
+                                            }
+                                        },
+                                        "case": "garae-tteok"
+                                    }
+                                },
+                                "default": {
+                                    "actions": {
+                                        "Post_a_reply_to_a_message_(V2)_6": {
+                                            "inputs": {
+                                                "body": {
+                                                    "body": {
+                                                        "content": "<p>Input was not recognized, did you write it out correctly?<br>\n(note: Please don't copy and paste, but type the text directly.)</p>",
+                                                        "contentType": "html"
+                                                    }
+                                                },
+                                                "host": {
+                                                    "connection": {
+                                                        "name": "@parameters('$connections')['teams']['connectionId']"
+                                                    }
+                                                },
+                                                "method": "post",
+                                                "path": "/v2/beta/teams/@{encodeURIComponent('12345678-abcd-123456-abcd-12345678')}/channels/@{encodeURIComponent('01:1234567890abcdef@thread.tacv2')}/messages/@{encodeURIComponent(triggerBody()?['id'])}/replies"
+                                            },
+                                            "runAfter": {},
+                                            "type": "ApiConnection"
+                                        }
+                                    }
+                                },
+                                "expression": "@variables('LastAction')",
+                                "runAfter": {},
+                                "type": "Switch"
+                            }
+                        },
+                        "case": "done"
+                    },
+                    "Case_wait": {
+                        "actions": {
+                            "Delay_UserWaittime": {
+                                "inputs": {
+                                    "interval": {
+                                        "count": "@variables('UserWaitTime')",
+                                        "unit": "Second"
+                                    }
+                                },
+                                "runAfter": {
+                                    "Post_wait_confirmation_as__a_reply_to_a_message": [
+                                        "Succeeded"
+                                    ]
+                                },
+                                "type": "Wait"
+                            },
+                            "Post_end_of_waittime_as_a_reply_to_a_message_": {
+                                "inputs": {
+                                    "body": {
+                                        "body": {
+                                            "content": "<p>@{variables('UserWaitTime')} minutes are up! <br>\n<br>\nAre you ready for the next step?<br>\n<br>\nIf you are ready to move on, post the following as a NEW Teams message:<br>\n<br>\nDone @{variables('LastAction')}<br>\nIf you need more time, set the timer by posting:<br>\n<br>\nWait @{variables('LastAction')} 5<br>\n<br>\nYou can change the number in whatever number of minutes you want untille the next reminder!</p>",
+                                            "contentType": "html"
+                                        }
+                                    },
+                                    "host": {
+                                        "connection": {
+                                            "name": "@parameters('$connections')['teams']['connectionId']"
+                                        }
+                                    },
+                                    "method": "post",
+                                    "path": "/v2/beta/teams/@{encodeURIComponent('12345678-abcd-123456-abcd-12345678')}/channels/@{encodeURIComponent('01:1234567890abcdef@thread.tacv2')}/messages/@{encodeURIComponent(triggerBody()?['id'])}/replies"
+                                },
+                                "runAfter": {
+                                    "Delay_UserWaittime": [
+                                        "Succeeded"
+                                    ]
+                                },
+                                "type": "ApiConnection"
+                            },
+                            "Post_wait_confirmation_as__a_reply_to_a_message": {
+                                "inputs": {
+                                    "body": {
+                                        "body": {
+                                            "content": "<p>Ok, we will remind you in @{variables('UserWaitTime')} minutes!</p>",
+                                            "contentType": "html"
+                                        }
+                                    },
+                                    "host": {
+                                        "connection": {
+                                            "name": "@parameters('$connections')['teams']['connectionId']"
+                                        }
+                                    },
+                                    "method": "post",
+                                    "path": "/v2/beta/teams/@{encodeURIComponent('12345678-abcd-123456-abcd-12345678')}/channels/@{encodeURIComponent('01:1234567890abcdef@thread.tacv2')}/messages/@{encodeURIComponent(triggerBody()?['id'])}/replies"
+                                },
+                                "runAfter": {},
+                                "type": "ApiConnection"
+                            }
+                        },
+                        "case": "wait"
+                    }
+                },
+                "default": {
+                    "actions": {
+                        "Post_a_reply_to_a_message_(V2)_4": {
+                            "inputs": {
+                                "body": {
+                                    "body": {
+                                        "content": "<p>The trigger could not be found. <br>\n<br>\nThe following triggers are available:<br>\n<br>\nStart - Starts the recipe<br>\nDone [action] - defines you are ready with an action<br>\nWait [action] [number] - gives a new reminder for the current step. <br>\n<br>\nSometimes the input can go wrong when you copy and paste the strings, please type them manually</p>",
+                                        "contentType": "html"
+                                    }
+                                },
+                                "host": {
+                                    "connection": {
+                                        "name": "@parameters('$connections')['teams']['connectionId']"
+                                    }
+                                },
+                                "method": "post",
+                                "path": "/v2/beta/teams/@{encodeURIComponent('12345678-abcd-123456-abcd-12345678')}/channels/@{encodeURIComponent('01:1234567890abcdef@thread.tacv2')}/messages/@{encodeURIComponent(triggerBody()?['id'])}/replies"
+                            },
+                            "runAfter": {},
+                            "type": "ApiConnection"
+                        }
+                    }
+                },
+                "expression": "@variables('Trigger')",
+                "runAfter": {
+                    "Post_Ascii_as_a_reply_to_the_message": [
+                        "Succeeded"
+                    ]
+                },
+                "type": "Switch"
+            }
+        },
+        "contentVersion": "1.0.0.0",
+        "outputs": {},
+        "parameters": {
+            "$connections": {
+                "defaultValue": {},
+                "type": "Object"
+            }
+        },
+        "triggers": {
+            "When_a_new_channel_message_is_added": {
+                "inputs": {
+                    "host": {
+                        "connection": {
+                            "name": "@parameters('$connections')['teams']['connectionId']"
+                        }
+                    },
+                    "method": "get",
+                    "path": "/trigger/beta/teams/@{encodeURIComponent('12345678-abcd-123456-abcd-12345678')}/channels/@{encodeURIComponent('01:1234567890abcdef@thread.tacv2')}/messages",
+                    "queries": {
+                        "$top": 50
+                    }
+                },
+                "recurrence": {
+                    "frequency": "Second",
+                    "interval": 30
+                },
+                "splitOn": "@triggerBody()",
+                "type": "ApiConnection"
+            }
+        }
+    },
+    "parameters": {
+        "$connections": {
+            "value": {
+                "teams": {
+                    "connectionId": "/subscriptions/12345678-abcd-123456-abcd-12345678/resourceGroups/SeasonofServerless/providers/Microsoft.Web/connections/teams",
+                    "connectionName": "teams",
+                    "id": "/subscriptions/12345678-abcd-123456-abcd-12345678/providers/Microsoft.Web/locations/westeurope/managedApis/teams"
+                }
+            }
+        }
+    }
+}
