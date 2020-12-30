@@ -1,0 +1,68 @@
+[
+    {
+        "Name": "marzipan bonbon",
+        "ChocolateType": "dark",
+        "Filling": "marzipan",
+        "ClaimedBy": "Fred"
+    },
+    {
+        "Name": "cream bonbon",
+        "ChocolateType": "milk",
+        "Filling": "cream",
+        "ClaimedBy": "false"
+    },
+    {
+        "Name": "cherry bonbon",
+        "ChocolateType": "white",
+        "Filling": "cherry",
+        "ClaimedBy": "false"
+    },
+    {
+        "Name": "almond block",
+        "ChocolateType": "milk",
+        "Filling": "almond",
+        "ClaimedBy": "false"
+    },
+    {
+        "Name": "pure coconut",
+        "ChocolateType": "dark",
+        "Filling": "coconut",
+        "ClaimedBy": "false"
+    },
+    {
+        "Name": "caramel sea salt",
+        "ChocolateType": "milk",
+        "Filling": "caramel-SeaSalt",
+        "ClaimedBy": "false"
+    },
+    {
+        "Name": "dark chilly",
+        "ChocolateType": "dark",
+        "Filling": "chilly pepper",
+        "ClaimedBy": "false"
+    },
+    {
+        "Name": "kerstkransje",
+        "ChocolateType": "dark",
+        "Filling": "fondant",
+        "ClaimedBy": "Bit"
+    },
+    {
+        "Name": "Pure dark block",
+        "ChocolateType": "dark",
+        "Filling": "none",
+        "ClaimedBy": "Bit"
+    },
+    {
+        "Name": "white cranberry",
+        "ChocolateType": "white",
+        "Filling": "cranberry",
+        "ClaimedBy": "false"
+    },
+    {
+        "Name": "raisin block",
+        "ChocolateType": "milk",
+        "Filling": "raisin",
+        "ClaimedBy": "Bit"
+    }
+]

@@ -1,0 +1,35 @@
+{
+  "bindings": [
+    {
+      "authLevel": "anonymous",
+      "type": "httpTrigger",
+      "direction": "in",
+      "name": "Request",
+      "methods": [
+        "get",
+        "post"
+      ]
+    },
+    {
+      "type": "http",
+      "direction": "out",
+      "name": "Response"
+    },
+    {
+      "type": "cosmosDB",
+      "name": "ChocDBin",
+      "direction": "in",
+      "connectionStringSetting": "ba4bes_DOCUMENTDB",
+      "databaseName": "SoS",
+      "collectionName": "C06"
+    },
+    {
+      "type": "cosmosDB",
+      "name": "ChocDBout",
+      "direction": "out",
+      "connectionStringSetting": "ba4bes_DOCUMENTDB",
+      "databaseName": "SoS",
+      "collectionName": "C06"
+    }
+  ]
+}
